@@ -12,7 +12,25 @@ export class JogadoresService {
     private readonly logger = new Logger(JogadoresService.name)
 
     async criarAtualizarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
-        this.criar(criarJogadorDto)
+
+        const { email } = criarJogadorDto
+
+        const jogadorEncontrado = await this.jogadores.find(jogador => jogador.email === email)
+
+        if (jogadorEncontrado) {
+
+            this.atualizar(jogadorEncontrado, criarJogadorDto)
+
+        } else {
+
+            this.criar(criarJogadorDto)
+
+        }
+
+    }
+
+    async consultarTodosJogadores(): Promise<Jogador[]> {
+        return this.jogadores;
     }
 
     private criar(criaJogadorDto: CriarJogadorDto): void {
@@ -32,6 +50,14 @@ export class JogadoresService {
         this.logger.log(`criaJogadorDto: ${JSON.stringify(jogador)}`)
 
         this.jogadores.push(jogador)
+
+    }
+
+    private atualizar(jogadorEncontrado: Jogador, criarJogadorDto: CriarJogadorDto): void {
+
+        const { nome } = criarJogadorDto
+
+        jogadorEncontrado.nome = nome
 
     }
 
